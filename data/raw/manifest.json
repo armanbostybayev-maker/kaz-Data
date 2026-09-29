@@ -1,0 +1,33 @@
+{
+  "captured_at": "2026-09-29",
+  "sources": [
+    {
+      "path": "kato/KATO_2026-09-18.xlsx",
+      "url": "https://stat.gov.kz/upload/iblock/a7d/eqogm92xc0udumlzfzffhcrutk0fjhb4/%D0%9A%D0%90%D0%A2%D0%9E_18.09.2026.xlsx",
+      "sha256": "7b87e0a8a72818ca5adcc7b4a7792dd0afd1a3165ed163197012c7c154d4e990",
+      "updated_at": "2026-09-18",
+      "publisher": "Бюро национальной статистики РК"
+    },
+    {
+      "path": "stat/demography/population_yearly_2026-08-11.csv",
+      "url": "https://stat.gov.kz/api/iblock/element/6584/csv/file/ru/",
+      "sha256": "17a78d98a58cb9ffcd8587a0de3c52269a4099a0be4753a466949be3c33b6cde",
+      "updated_at": "2026-08-11",
+      "publisher": "Бюро национальной статистики РК"
+    },
+    {
+      "path": "geokz/2024-01/kaz_admbnda_adm1_2024.shp",
+      "url": "https://github.com/arodionoff/geokz",
+      "sha256": "e9cd4e520b263ebe2f984be026b25850be56853ecf6e623ab041cf21d0dfe6f7",
+      "valid_at": "2024-01",
+      "publisher": "arodionoff/geokz"
+    },
+    {
+      "path": "geokz/2024-01/kaz_admbnda_adm2_2024.shp",
+      "url": "https://github.com/arodionoff/geokz",
+      "sha256": "6821c48a27c5c77c20d1cf71365a0c4078d48e28494b19fa9a6be4c7c2b63a49",
+      "valid_at": "2024-01",
+      "publisher": "arodionoff/geokz"
+    }
+  ]
+}

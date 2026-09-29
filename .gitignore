@@ -1,0 +1,12 @@
+.env
+.next/
+node_modules/
+__pycache__/
+.pytest_cache/
+.venv/
+*.pyc
+data/processed/*
+!data/processed/.gitkeep
+data/reports/*.log
+!.gitkeep
+.source-geokz/
