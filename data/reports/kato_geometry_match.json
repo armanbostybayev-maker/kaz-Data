@@ -1,0 +1,24 @@
+{
+  "adm1": {
+    "matched": 20,
+    "unmatched_geometry": 0,
+    "unmatched_kato": 0,
+    "ambiguous": 0,
+    "renamed": 0,
+    "split": 0,
+    "merged": 0,
+    "new_territory": 0,
+    "obsolete_geometry": 0
+  },
+  "adm2": {
+    "matched": 205,
+    "unmatched_geometry": 19,
+    "unmatched_kato": 5,
+    "ambiguous": 0,
+    "renamed": 0,
+    "split": 0,
+    "merged": 0,
+    "new_territory": 0,
+    "obsolete_geometry": 0
+  }
+}
