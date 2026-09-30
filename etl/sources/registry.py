@@ -36,6 +36,16 @@ SOURCES = [
     dict(indicator="housing_commissioned", name_ru="Ввод жилья", name_kk="Тұрғын үйді пайдалануға беру", category="construction", file="construction/housing_commissioned_2026-09-30.csv", element=4289, page=CONSTRUCTION_PAGE, unit="м²", source_unit="sqm", plausible_max=100_000_000, filters={"СПТМ (по отчету)":"Всего", "КФС(по каталогу)":"Всего", "ГСГТПЕ":"Всего", "ГКОФ":"Всего"}, updated="2026-09-30"),
 ]
 
+# These official tables contain district/city rows in addition to regional
+# totals. Matching still requires an unambiguous current KATO.
+DISTRICT_INDICATORS = {
+    "population", "births", "deaths", "natural_growth", "migration_balance",
+    "industrial_output", "industrial_production_index",
+    "fixed_capital_investment", "construction_output", "housing_commissioned",
+}
+for _source in SOURCES:
+    _source["available_levels"] = ["region", "district"] if _source["indicator"] in DISTRICT_INDICATORS else ["region"]
+
 CATEGORY_NAMES = {
     "demography": "Демография", "labor": "Рынок труда", "income": "Доходы",
     "economy": "Экономика", "industry": "Промышленность",

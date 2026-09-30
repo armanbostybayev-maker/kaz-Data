@@ -7,7 +7,8 @@
     "download_url": "https://stat.gov.kz/api/iblock/element/6584/csv/file/ru/",
     "format": "csv",
     "territorial_level": [
-      "region"
+      "region",
+      "district"
     ],
     "periodicity": "year",
     "first_period": "2000",
@@ -23,7 +24,8 @@
     "download_url": "https://stat.gov.kz/api/iblock/element/6548/csv/file/ru/",
     "format": "csv",
     "territorial_level": [
-      "region"
+      "region",
+      "district"
     ],
     "periodicity": "year",
     "first_period": "2000",
@@ -39,7 +41,8 @@
     "download_url": "https://stat.gov.kz/api/iblock/element/6550/csv/file/ru/",
     "format": "csv",
     "territorial_level": [
-      "region"
+      "region",
+      "district"
     ],
     "periodicity": "year",
     "first_period": "2000",
@@ -55,7 +58,8 @@
     "download_url": "https://stat.gov.kz/api/iblock/element/6547/csv/file/ru/",
     "format": "csv",
     "territorial_level": [
-      "region"
+      "region",
+      "district"
     ],
     "periodicity": "year",
     "first_period": "2000",
@@ -71,7 +75,8 @@
     "download_url": "https://stat.gov.kz/api/iblock/element/6567/csv/file/ru/",
     "format": "csv",
     "territorial_level": [
-      "region"
+      "region",
+      "district"
     ],
     "periodicity": "year",
     "first_period": "2023",
@@ -215,7 +220,8 @@
     "download_url": "https://stat.gov.kz/api/iblock/element/5791/csv/file/ru/",
     "format": "csv",
     "territorial_level": [
-      "region"
+      "region",
+      "district"
     ],
     "periodicity": "year",
     "first_period": "2009",
@@ -231,7 +237,8 @@
     "download_url": "https://stat.gov.kz/api/iblock/element/5809/csv/file/ru/",
     "format": "csv",
     "territorial_level": [
-      "region"
+      "region",
+      "district"
     ],
     "periodicity": "year",
     "first_period": "2009",
@@ -247,7 +254,8 @@
     "download_url": "https://stat.gov.kz/api/iblock/element/5546/csv/file/ru/",
     "format": "csv",
     "territorial_level": [
-      "region"
+      "region",
+      "district"
     ],
     "periodicity": "year",
     "first_period": "2016",
@@ -263,7 +271,8 @@
     "download_url": "https://stat.gov.kz/api/iblock/element/4296/csv/file/ru/",
     "format": "csv",
     "territorial_level": [
-      "region"
+      "region",
+      "district"
     ],
     "periodicity": "year",
     "first_period": "2016",
@@ -279,7 +288,8 @@
     "download_url": "https://stat.gov.kz/api/iblock/element/4289/csv/file/ru/",
     "format": "csv",
     "territorial_level": [
-      "region"
+      "region",
+      "district"
     ],
     "periodicity": "year",
     "first_period": "2014",

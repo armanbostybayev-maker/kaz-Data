@@ -49,15 +49,20 @@ def clean_value(raw: object, plausible_max: float, divisor: float = 1) -> float 
     return round(value, 4)
 
 
-def current_regions() -> tuple[pd.DataFrame, dict[str, str]]:
+def current_territories() -> tuple[pd.DataFrame, dict[str, tuple[str, str]], set[str]]:
     kato = pd.read_csv(ROOT / "data/processed/kato.csv", dtype=str).fillna("")
-    regions = kato[kato.admin_level.astype(int).eq(1)].copy()
-    lookup = {territory_key(r.name_ru): r.kato for r in regions.itertuples()}
-    lookup["city:нур султан"] = "710000000"
-    return regions, lookup
+    territories = kato[kato.admin_level.astype(int).isin([1, 2])].copy()
+    territories["level_name"] = territories.admin_level.astype(int).map({1:"region", 2:"district"})
+    territories["match_key"] = territories.name_ru.map(territory_key)
+    counts = territories.groupby("match_key").size()
+    ambiguous = set(counts[counts.gt(1)].index)
+    unique = territories[~territories.match_key.isin(ambiguous)]
+    lookup = {r.match_key:(r.kato, r.level_name) for r in unique.itertuples()}
+    lookup["city:нур султан"] = ("710000000", "region")
+    return territories, lookup, ambiguous
 
 
-def parse_source(source: dict, lookup: dict[str, str]) -> tuple[pd.DataFrame, list[dict]]:
+def parse_source(source: dict, lookup: dict[str, tuple[str, str]], ambiguous: set[str]) -> tuple[pd.DataFrame, list[dict]]:
     path = RAW / source["file"]
     raw = pd.read_csv(path, sep="\t", dtype=str)
     territory_col = next(c for c in raw.columns if c.startswith("КАТО(") and not c.startswith("L"))
@@ -66,20 +71,22 @@ def parse_source(source: dict, lookup: dict[str, str]) -> tuple[pd.DataFrame, li
         data = data[data[column].fillna("").str.casefold().eq(expected.casefold())]
     data["normalized_name"] = data[territory_col].fillna("").map(normalize_name)
     data["match_key"] = data[territory_col].fillna("").map(territory_key)
-    data["kato"] = data.match_key.map(lookup)
+    matches = data.match_key.map(lookup)
+    data["kato"] = matches.map(lambda x: x[0] if isinstance(x, tuple) else None)
+    data["level"] = matches.map(lambda x: x[1] if isinstance(x, tuple) else None)
     report = []
     for name, group in data.groupby(territory_col, dropna=False):
         kato = group.kato.dropna().iloc[0] if group.kato.notna().any() else ""
         report.append({
             "source_name": str(name or ""), "normalized_name": normalize_name(str(name or "")),
             "matched_kato": kato, "matched_name": "", "method": "normalized_name_and_admin_type" if kato else "none",
-            "confidence": "1.0" if kato else "0", "status": "confirmed" if kato else "unmatched",
+            "confidence": "1.0" if kato else "0", "status": "confirmed" if kato else "ambiguous" if group.match_key.iloc[0] in ambiguous else "unmatched",
             "indicator": source["indicator"],
         })
-    data = data[data.kato.notna()].copy()
+    data = data[data.kato.notna() & data.level.isin(source["available_levels"])].copy()
     data["period"] = [period_label(p, d) for p, d in zip(data.PERIOD, data.DAT)]
     data["value"] = data.VAL.map(lambda x: clean_value(x, source["plausible_max"], source.get("output_divisor", 1)))
-    data = data[data.value.notna()][["kato", "period", "value"]]
+    data = data[data.value.notna()][["kato", "level", "period", "value"]]
     # Duplicates after aggregate filters indicate an unsafe source selection.
     dup = data.duplicated(["kato", "period"], keep=False)
     if dup.any():
@@ -98,7 +105,7 @@ def payload(source: dict, data: pd.DataFrame, *, derived=False, formula=None, in
         "source_page": source["page"], "source_download": csv_url(source["element"]) if source.get("element") else None,
         "source_updated_at": source.get("updated"), "etl_generated_at": GENERATED,
         "periodicity": "quarter" if any("-Q" in p for p in values) else "month" if any(len(p) == 7 for p in values) else "year",
-        "territorial_level": "region", "available_levels": ["region"],
+        "territorial_level": source["available_levels"], "available_levels": source["available_levels"],
         "territorial_reference_date": "current KATO 2026-09-18; historical boundaries are not redistributed",
         "geometry_reference_date": "2024-01", "derived": derived,
         **({"formula": formula, "inputs": inputs} if derived else {}),
@@ -122,54 +129,60 @@ def derive(base: dict[str, tuple[dict, pd.DataFrame]], regions: pd.DataFrame) ->
     change = pop.copy(); change["value"] = change.groupby("kato").value.pct_change(fill_method=None) * 100
     change = change[change.value.notna()]
     derived.append((dict(pop_source, indicator="population_change_pct", name_ru="Изменение численности населения", name_kk="Халық санының өзгеруі", unit="%"), change, {"formula":"(population[t] / population[t-1] - 1) × 100", "inputs":["population"]}))
-    geo = json.loads((ROOT / "data/processed/territories_adm1.geojson").read_text(encoding="utf-8"))
-    areas = {str(f["properties"]["kato"]): f["properties"].get("area_km2") for f in geo["features"]}
+    geos = [json.loads((ROOT / f"data/processed/territories_{level}.geojson").read_text(encoding="utf-8")) for level in ["adm1", "adm2"]]
+    areas = {str(f["properties"]["kato"]): f["properties"].get("area_km2") for geo in geos for f in geo["features"]}
     density = pop.copy(); density["value"] = [round(v / areas.get(str(k), math.nan), 3) if areas.get(str(k)) else None for k, v in zip(density.kato, density.value)]
     density = density[density.value.notna()]
     derived.append((dict(pop_source, indicator="population_density", name_ru="Плотность населения", name_kk="Халық тығыздығы", unit="чел./км²"), density, {"formula":"population / area_km2", "inputs":["population", "territory_geometry_area"]}))
     if "fixed_capital_investment" in base:
         inv_source, inv = base["fixed_capital_investment"]
         merged = inv.merge(pop, on=["kato", "period"], suffixes=("_inv", "_pop"))
-        per = merged[["kato", "period"]].copy(); per["value"] = (merged.value_inv * 1_000_000_000 / merged.value_pop).round(2)
+        per = merged[["kato", "level_inv", "period"]].rename(columns={"level_inv":"level"}); per["value"] = (merged.value_inv * 1_000_000_000 / merged.value_pop).round(2)
         derived.append((dict(inv_source, indicator="fixed_capital_investment_per_capita", name_ru="Инвестиции в основной капитал на душу населения", name_kk="Жан басына шаққандағы негізгі капиталға инвестициялар", unit="₸/чел."), per, {"formula":"fixed_capital_investment / population", "inputs":["fixed_capital_investment", "population"]}))
     return derived
 
 
 def run(categories: set[str] | None = None) -> dict:
-    regions, lookup = current_regions()
+    territories, lookup, ambiguous = current_territories()
     selected = [s for s in SOURCES if categories is None or s["category"] in categories]
     base, matches, outputs = {}, [], []
     for source in selected:
-        data, report = parse_source(source, lookup); matches.extend(report); base[source["indicator"]] = (source, data)
+        data, report = parse_source(source, lookup, ambiguous); matches.extend(report); base[source["indicator"]] = (source, data)
         outputs.append((source, write_payload(source, data)))
     if categories is None or "demography" in categories or "investment" in categories:
         required = {s["indicator"] for s in SOURCES if s["indicator"] in {"population", "fixed_capital_investment"}}
         for source in SOURCES:
             if source["indicator"] in required and source["indicator"] not in base:
-                data, report = parse_source(source, lookup); base[source["indicator"]] = (source, data); matches.extend(report)
-        for source, data, meta in derive(base, regions):
+                data, report = parse_source(source, lookup, ambiguous); base[source["indicator"]] = (source, data); matches.extend(report)
+        for source, data, meta in derive(base, territories):
             if categories is None or source["category"] in categories:
                 outputs.append((source, write_payload(source, data, derived=True, **meta)))
-    write_reports(outputs, matches, regions)
+    write_reports(outputs, matches, territories)
     write_catalog(outputs)
     return {"indicators": len(outputs), "categories": sorted({s["category"] for s, _ in outputs}), "values": sum(sum(len(v) for v in p["values"].values()) for _, p in outputs)}
 
 
-def write_reports(outputs, matches, regions):
+def write_reports(outputs, matches, territories):
     REPORTS.mkdir(parents=True, exist_ok=True)
-    names = dict(zip(regions.kato, regions.name_ru))
+    names = dict(zip(territories.kato, territories.name_ru))
     for row in matches: row["matched_name"] = names.get(row["matched_kato"], "")
     fields = ["indicator", "source_name", "normalized_name", "matched_kato", "matched_name", "method", "confidence", "status"]
     with (REPORTS / "statistics_kato_match.csv").open("w", encoding="utf-8-sig", newline="") as h:
         w = csv.DictWriter(h, fieldnames=fields); w.writeheader(); w.writerows(matches)
     coverage = []
-    expected = len(regions)
+    geometry_codes = {}
+    for level, filename in [("region", "territories_adm1.geojson"), ("district", "territories_adm2.geojson")]:
+        geo = json.loads((ROOT / "data/processed" / filename).read_text(encoding="utf-8"))
+        geometry_codes[level] = {str(f["properties"]["kato"]) for f in geo["features"]}
+    expected_by_level = {level:len(codes) for level, codes in geometry_codes.items()}
     for source, data in outputs:
         for period, values in data["values"].items():
-            loaded = len(values); pct = round(loaded / expected * 100, 1)
-            coverage.append({"indicator":source["indicator"], "level":"region", "period":period,
-                "expected_territories":expected, "loaded_territories":loaded, "matched":loaded,
-                "unmatched":expected-loaded, "coverage_pct":pct, "status":"ok" if pct == 100 else "partial"})
+            for level in source["available_levels"]:
+                allowed = geometry_codes[level]
+                loaded = len(set(values) & allowed); expected = expected_by_level[level]; pct = round(loaded / expected * 100, 1)
+                coverage.append({"indicator":source["indicator"], "level":level, "period":period,
+                    "expected_territories":expected, "loaded_territories":loaded, "matched":loaded,
+                    "unmatched":expected-loaded, "coverage_pct":pct, "status":"ok" if pct == 100 else "partial"})
     with (REPORTS / "indicator_coverage.csv").open("w", encoding="utf-8-sig", newline="") as h:
         w = csv.DictWriter(h, fieldnames=coverage[0].keys()); w.writeheader(); w.writerows(coverage)
     (PUBLIC / "coverage.json").write_text(json.dumps(coverage, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
@@ -182,7 +195,7 @@ def write_catalog(outputs):
         for source, data in outputs:
             if source["category"] != category: continue
             indicators.append({"id":source["indicator"], "slug":source["indicator"], "name_ru":source["name_ru"], "name_kk":source["name_kk"],
-                "description":source["name_ru"], "category":category, "unit":data["unit"], "available_levels":["region"],
+                "description":source["name_ru"], "category":category, "unit":data["unit"], "available_levels":data["available_levels"],
                 "periodicity":data["periodicity"], "available_periods":data["periods"], "source":"Бюро национальной статистики РК",
                 "source_url":data["source_page"], "data_path":f"{category}/{source['indicator']}.json", "updated_at":data["source_updated_at"],
                 "derived":data["derived"], "diverging":bool(source.get("diverging")), "formula":data.get("formula"), "inputs":data.get("inputs")})
@@ -196,7 +209,7 @@ def write_catalog(outputs):
         path = PUBLIC / source["category"] / f"{source['indicator']}.json"
         periods = json.loads(path.read_text(encoding="utf-8"))["periods"] if path.exists() else []
         source_catalog.append({"indicator":source["indicator"], "name_ru":source["name_ru"], "category":source["category"],
-            "source_page":source["page"], "download_url":csv_url(source["element"]), "format":"csv", "territorial_level":["region"],
+            "source_page":source["page"], "download_url":csv_url(source["element"]), "format":"csv", "territorial_level":source["available_levels"],
             "periodicity":"quarter" if any("-Q" in p for p in periods) else "year", "first_period":periods[0] if periods else None,
             "last_period":periods[-1] if periods else None, "last_checked":GENERATED[:10], "status":"active" if periods else "unavailable"})
     CATALOG_PATH.write_text(json.dumps(source_catalog, ensure_ascii=False, indent=2), encoding="utf-8")

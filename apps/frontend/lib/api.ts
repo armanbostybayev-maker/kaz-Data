@@ -51,8 +51,8 @@ export async function api<T>(path:string):Promise<T>{
 export async function mapData(indicator:string,period:string,level:number):Promise<any>{
   if(!STATIC_MODE) return api(`/api/map/${indicator}?period=${period}&territory_level=${level}`);
   const [geo,data,meta]=await Promise.all([asset<any>(level===1?"territories-adm1.geojson":"territories-adm2.geojson"),indicatorData(indicator),indicatorMeta(indicator)]);
-  const values=level===1?(data.values[period]||{}):{};
-  return {...geo,metadata:{...meta,period,available:level===1},features:geo.features.map((feature:any)=>{
+  const levelName=level===1?"region":"district"; const values=meta.available_levels.includes(levelName)?(data.values[period]||{}):{};
+  return {...geo,metadata:{...meta,period,available:meta.available_levels.includes(levelName)},features:geo.features.map((feature:any)=>{
     const value=values[String(feature.properties.kato)]; return {...feature,properties:{...feature.properties,value:value??null,unit:data.unit,indicator_name:meta.name_ru,period}};
   })};
 }
