@@ -35,9 +35,21 @@ npx serve out
 
 Проверенный статический data bundle уже находится в `apps/frontend/public/data`, поэтому для обычной сборки Python и база данных не нужны. Чтобы обновить bundle из свежих raw-файлов, отдельно выполните ETL и `python scripts/prepare_static_site.py`.
 
-Workflow `.github/workflows/pages.yml` повторяет эти шаги и публикует `out` в GitHub Pages при push в `main` или `master`. В настройках репозитория выберите **Settings → Pages → Source: GitHub Actions**. Статическая публикация содержит проверенные геометрии adm1/adm2 и официальный ряд населения; серверные MVT, Redis и динамический ETL доступны только в full-stack режиме.
+Workflow `.github/workflows/pages.yml` повторяет эти шаги и публикует `out` в GitHub Pages при push в `main` или `master`. В настройках репозитория выберите **Settings → Pages → Source: GitHub Actions**. Статическая публикация содержит проверенные геометрии adm1/adm2 и 21 реально подключённый показатель из семи категорий; серверные MVT, Redis и динамический ETL доступны только в full-stack режиме.
 
-Raw-файлы хранятся с датой версии и не перезаписываются. Репозиторий уже содержит официальный `KATO_2026-09-18.xlsx`, исходные shapefile `geokz` и официальный CSV динамики населения, загруженные 29.09.2026. При публикации репозитория проверьте условия повторного распространения исходных файлов; при необходимости исключите их и запускайте документированные download jobs.
+Raw-файлы хранятся с датой версии. Репозиторий содержит официальный `KATO_2026-09-18.xlsx`, исходные shapefile `geokz` и официальные CSV БНС; особо крупные исходники промышленности сохранены без изменения содержимого в gzip.
+
+## Подключённые данные
+
+- Демография: население, изменение и плотность населения, родившиеся, умершие, естественный прирост, сальдо миграции.
+- Рынок труда: рабочая сила, занятые, безработные, уровень безработицы.
+- Доходы: среднедушевые номинальные денежные доходы.
+- Экономика: ВРП, ВРП на душу населения, индекс физического объёма ВРП.
+- Промышленность: объём и индекс промышленного производства.
+- Инвестиции: инвестиции в основной капитал и расчёт на душу населения.
+- Строительство: объём строительных работ и ввод жилья.
+
+Меню строится из `public/data/catalog.json`, а выбранный dataset загружается лениво. Фактическое покрытие видно на странице `/data-status` и в `data/reports/indicator_coverage.csv`. Все опубликованные ряды привязаны к подтверждённому КАТО уровня области; районные значения не синтезируются.
 
 ## Архитектура
 
@@ -60,7 +72,7 @@ make validate           # validation report
 make test               # backend + frontend unit tests
 ```
 
-Эквиваленты: `python -m etl kato`, `python -m etl geography`, `python -m etl stat --category demography`, `python -m etl all`.
+Эквиваленты: `python -m etl kato`, `python -m etl geography`, `python -m etl demography`, `python -m etl labor`, `python -m etl income`, `python -m etl economy`, `python -m etl industry`, `python -m etl investment`, `python -m etl construction`, `python -m etl all`, `python -m etl validate`. Проверенные URL обновляются командой `python -m etl download`.
 
 ## Обновление КАТО и геометрии
 

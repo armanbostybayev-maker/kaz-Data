@@ -7,7 +7,10 @@ from etl.normalization.text import normalize_name
 
 
 def match_geometry(shape_path: Path, kato_csv: Path, output: Path, report: Path, level: int) -> dict[str, int]:
-    geo = gpd.read_file(shape_path).to_crs(4326)
+    source_geo = gpd.read_file(shape_path)
+    areas = source_geo.to_crs(6933).geometry.area / 1_000_000
+    geo = source_geo.to_crs(4326)
+    geo["_area_km2"] = areas.values
     kato = pd.read_csv(kato_csv, dtype={"kato": str, "parent_kato": str}).fillna("")
     kato = kato[kato.admin_level == level].copy()
     kato["key"] = kato.name_ru.map(normalize_name)
@@ -31,7 +34,9 @@ def match_geometry(shape_path: Path, kato_csv: Path, output: Path, report: Path,
             continue
         item=candidates[0]; matched_codes.add(item["kato"])
         reviews.append({"status":"matched","source_name":source_name,"source_id":row.get(f"ADM{level}_PCODE",source_kato),"candidates":item["kato"],"decision":"exact_code" if exact_code else "exact_normalized_name_parent"})
-        features.append({"type":"Feature","id":item["kato"],"properties":{k:item[k] for k in ["kato","parent_kato","name_ru","name_kk","admin_level","admin_type","kato_version"]},"geometry":row.geometry.__geo_interface__})
+        properties={k:item[k] for k in ["kato","parent_kato","name_ru","name_kk","admin_level","admin_type","kato_version"]}
+        properties["area_km2"] = round(float(row["_area_km2"]), 2)
+        features.append({"type":"Feature","id":item["kato"],"properties":properties,"geometry":row.geometry.__geo_interface__})
     missing = kato[~kato.kato.isin(matched_codes)]
     counts["unmatched_kato"] = len(missing)
     reviews += [{"status":"unmatched_kato","source_name":"","source_id":"","candidates":r.kato,"decision":"review_required"} for r in missing.itertuples()]

@@ -1,0 +1,8 @@
+.ramp.diverging{background:linear-gradient(90deg,#9b2f47,#f3f1e7,#08796c)}
+.warning{font-size:10px;line-height:1.4;color:#8a4b15;background:#fff4df;padding:9px;border-radius:8px}
+.metric em{display:block;font-style:normal;font-size:10px;opacity:.65;margin-top:8px}
+.compare{border-top:1px solid var(--line);margin-top:22px;padding-top:14px}.compare>b{font-size:10px}
+.compareAdd{display:flex;gap:5px;margin:9px 0}.compareAdd select{min-width:0;flex:1;border:1px solid var(--line);border-radius:7px;padding:7px;font-size:10px}.compareAdd button{border:0;border-radius:7px;background:var(--accent);color:#fff;width:31px}
+.barRow{margin:9px 0}.barRow span{font-size:9px;display:flex;justify-content:space-between}.barRow span button{border:0;background:none;color:#9b2f47}.barRow>i{height:7px;background:#168878;display:block;border-radius:4px;margin:3px 0}.barRow small{font-size:9px;color:var(--muted)}
+.details footer a{color:var(--accent)}
+.statusPage{max-width:1100px;margin:45px auto;padding:0 24px}.statusPage>a{color:var(--accent)}.statusPage h1{font:36px Georgia,serif}.statusPage p{color:var(--muted);line-height:1.5}.statusPage table{width:100%;border-collapse:collapse;background:#fff}.statusPage th,.statusPage td{text-align:left;padding:11px;border-bottom:1px solid var(--line);font-size:12px}.statusPage th{background:#eef4f0}.statusPage .ok{color:#08796c;font-weight:700}.statusPage .partial{color:#9b641b}

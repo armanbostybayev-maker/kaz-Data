@@ -1,0 +1,42 @@
+name: Update official BNS statistics
+on:
+  schedule:
+    - cron: "17 3 15 * *"
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12", cache: pip}
+      - run: pip install -r etl/requirements.txt
+      - name: Check and download verified BNS sources
+        run: python -m etl download
+      - name: Build and validate all seven categories
+        run: |
+          python -m etl all
+          python -m etl validate
+          python scripts/prepare_static_site.py
+      - uses: actions/setup-node@v4
+        with: {node-version: "22", cache: npm, cache-dependency-path: apps/frontend/package-lock.json}
+      - name: Verify frontend
+        working-directory: apps/frontend
+        env:
+          NEXT_PUBLIC_STATIC_MODE: "true"
+          NEXT_PUBLIC_BASE_PATH: "/kaz-Data"
+        run: npm ci && npm test && npm run build
+      - name: Commit only changed source/data artifacts
+        shell: bash
+        run: |
+          if git diff --quiet && [[ -z "$(git status --porcelain)" ]]; then
+            echo "Official files and generated datasets are unchanged."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/raw/stat data/catalog data/reports apps/frontend/public/data
+          git commit -m "data: refresh official BNS statistics"
+          git push

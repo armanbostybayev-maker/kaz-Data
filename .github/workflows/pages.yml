@@ -20,9 +20,8 @@ jobs:
       - name: Build official static datasets
         run: |
           pip install -r etl/requirements.txt
-          python -m etl kato
-          python -m etl geography
-          python -m etl stat --category demography
+          python -m etl all
+          python -m etl validate
           python scripts/prepare_static_site.py
       - uses: actions/setup-node@v4
         with: {node-version: "22", cache: npm, cache-dependency-path: apps/frontend/package-lock.json}

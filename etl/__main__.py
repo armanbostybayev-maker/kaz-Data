@@ -32,29 +32,34 @@ def geography():
 
 
 def stat(category:str):
-    if category!="demography": print(json.dumps({"category":category,"status":"adapter_not_configured","loaded":0})); return
-    from etl.sources.demography.population import parse
-    from etl.validation.rules import validate_values
+    from etl.pipeline import run
     if not KATO_CSV.exists(): kato()
-    data,unmatched=parse(ROOT/"data/raw/stat/demography/population_yearly_2026-08-11.csv",KATO_CSV)
-    data.to_csv(ROOT/"data/processed/population.csv",index=False,encoding="utf-8-sig")
-    unmatched.to_csv(ROOT/"data/reports/population_unmatched.csv",index=False,encoding="utf-8-sig")
-    validate_values(data).to_csv(ROOT/"data/reports/data_quality_issues.csv",index=False,encoding="utf-8-sig")
-    from etl.load import load_values
-    db_rows = load_values(ROOT/"data/processed/population.csv")
-    print(json.dumps({"normalized":len(data),"database_rows":db_rows,"unmatched":len(unmatched)},ensure_ascii=False))
+    if not (ROOT/"data/processed/territories_adm1.geojson").exists(): geography()
+    print(json.dumps(run({category}),ensure_ascii=False))
 
 
 def main():
     p=argparse.ArgumentParser(prog="python -m etl"); sub=p.add_subparsers(dest="command",required=True)
-    sub.add_parser("kato");sub.add_parser("geography");sub.add_parser("validate");sub.add_parser("status");sub.add_parser("all")
+    sub.add_parser("kato");sub.add_parser("geography");sub.add_parser("validate");sub.add_parser("status");sub.add_parser("all");sub.add_parser("catalog");sub.add_parser("download")
+    for name in ["demography","labor","income","economy","industry","investment","construction"]: sub.add_parser(name)
     s=sub.add_parser("stat");s.add_argument("--category",required=True)
     a=p.parse_args()
     if a.command=="kato": kato()
     elif a.command=="geography": geography()
     elif a.command=="stat": stat(a.category)
-    elif a.command=="all": kato(); geography(); stat("demography")
-    elif a.command=="validate": stat("demography")
+    elif a.command=="all":
+        from etl.pipeline import run
+        kato(); geography(); print(json.dumps(run(),ensure_ascii=False))
+    elif a.command=="validate":
+        from etl.pipeline import validate
+        print(json.dumps(validate(),ensure_ascii=False))
+    elif a.command=="catalog":
+        from etl.pipeline import run
+        print(json.dumps(run(),ensure_ascii=False))
+    elif a.command=="download":
+        from etl.download import download_all
+        print(json.dumps(download_all(),ensure_ascii=False))
+    elif a.command in ["demography","labor","income","economy","industry","investment","construction"]: stat(a.command)
     else: print(json.dumps({"kato_raw":KATO_RAW.exists(),"kato_processed":KATO_CSV.exists()}))
 
 if __name__=="__main__":main()

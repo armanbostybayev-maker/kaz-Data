@@ -1,0 +1,290 @@
+[
+  {
+    "indicator": "population",
+    "name_ru": "Численность населения",
+    "category": "demography",
+    "source_page": "https://stat.gov.kz/ru/industries/socialtatistics/demography/dynamic-tables/",
+    "download_url": "https://stat.gov.kz/api/iblock/element/6584/csv/file/ru/",
+    "format": "csv",
+    "territorial_level": [
+      "region"
+    ],
+    "periodicity": "year",
+    "first_period": "2000",
+    "last_period": "2025",
+    "last_checked": "2026-09-30",
+    "status": "active"
+  },
+  {
+    "indicator": "births",
+    "name_ru": "Родившиеся",
+    "category": "demography",
+    "source_page": "https://stat.gov.kz/ru/industries/socialtatistics/demography/dynamic-tables/",
+    "download_url": "https://stat.gov.kz/api/iblock/element/6548/csv/file/ru/",
+    "format": "csv",
+    "territorial_level": [
+      "region"
+    ],
+    "periodicity": "year",
+    "first_period": "2000",
+    "last_period": "2024",
+    "last_checked": "2026-09-30",
+    "status": "active"
+  },
+  {
+    "indicator": "deaths",
+    "name_ru": "Умершие",
+    "category": "demography",
+    "source_page": "https://stat.gov.kz/ru/industries/socialtatistics/demography/dynamic-tables/",
+    "download_url": "https://stat.gov.kz/api/iblock/element/6550/csv/file/ru/",
+    "format": "csv",
+    "territorial_level": [
+      "region"
+    ],
+    "periodicity": "year",
+    "first_period": "2000",
+    "last_period": "2024",
+    "last_checked": "2026-09-30",
+    "status": "active"
+  },
+  {
+    "indicator": "natural_growth",
+    "name_ru": "Естественный прирост",
+    "category": "demography",
+    "source_page": "https://stat.gov.kz/ru/industries/socialtatistics/demography/dynamic-tables/",
+    "download_url": "https://stat.gov.kz/api/iblock/element/6547/csv/file/ru/",
+    "format": "csv",
+    "territorial_level": [
+      "region"
+    ],
+    "periodicity": "year",
+    "first_period": "2000",
+    "last_period": "2024",
+    "last_checked": "2026-09-30",
+    "status": "active"
+  },
+  {
+    "indicator": "migration_balance",
+    "name_ru": "Сальдо миграции",
+    "category": "demography",
+    "source_page": "https://stat.gov.kz/ru/industries/socialtatistics/demography/dynamic-tables/",
+    "download_url": "https://stat.gov.kz/api/iblock/element/6567/csv/file/ru/",
+    "format": "csv",
+    "territorial_level": [
+      "region"
+    ],
+    "periodicity": "year",
+    "first_period": "2023",
+    "last_period": "2024",
+    "last_checked": "2026-09-30",
+    "status": "active"
+  },
+  {
+    "indicator": "labor_force",
+    "name_ru": "Численность рабочей силы",
+    "category": "labor",
+    "source_page": "https://stat.gov.kz/ru/industries/labor-and-income/stat-empt-unempl/dynamic-tables/",
+    "download_url": "https://stat.gov.kz/api/iblock/element/102800/csv/file/ru/",
+    "format": "csv",
+    "territorial_level": [
+      "region"
+    ],
+    "periodicity": "year",
+    "first_period": "2001",
+    "last_period": "2025",
+    "last_checked": "2026-09-30",
+    "status": "active"
+  },
+  {
+    "indicator": "employed",
+    "name_ru": "Занятое население",
+    "category": "labor",
+    "source_page": "https://stat.gov.kz/ru/industries/labor-and-income/stat-empt-unempl/dynamic-tables/",
+    "download_url": "https://stat.gov.kz/api/iblock/element/102798/csv/file/ru/",
+    "format": "csv",
+    "territorial_level": [
+      "region"
+    ],
+    "periodicity": "quarter",
+    "first_period": "2023-Q1",
+    "last_period": "2025-Q2",
+    "last_checked": "2026-09-30",
+    "status": "active"
+  },
+  {
+    "indicator": "unemployed",
+    "name_ru": "Безработное население",
+    "category": "labor",
+    "source_page": "https://stat.gov.kz/ru/industries/labor-and-income/stat-empt-unempl/dynamic-tables/",
+    "download_url": "https://stat.gov.kz/api/iblock/element/102791/csv/file/ru/",
+    "format": "csv",
+    "territorial_level": [
+      "region"
+    ],
+    "periodicity": "quarter",
+    "first_period": "2010-Q1",
+    "last_period": "2025-Q2",
+    "last_checked": "2026-09-30",
+    "status": "active"
+  },
+  {
+    "indicator": "unemployment_rate",
+    "name_ru": "Уровень безработицы",
+    "category": "labor",
+    "source_page": "https://stat.gov.kz/ru/industries/labor-and-income/stat-empt-unempl/dynamic-tables/",
+    "download_url": "https://stat.gov.kz/api/iblock/element/102790/csv/file/ru/",
+    "format": "csv",
+    "territorial_level": [
+      "region"
+    ],
+    "periodicity": "quarter",
+    "first_period": "2023-Q1",
+    "last_period": "2025-Q2",
+    "last_checked": "2026-09-30",
+    "status": "active"
+  },
+  {
+    "indicator": "nominal_income_per_capita",
+    "name_ru": "Среднедушевые номинальные денежные доходы",
+    "category": "income",
+    "source_page": "https://stat.gov.kz/ru/industries/laborand-income/stat-life/dynamic-tables/",
+    "download_url": "https://stat.gov.kz/api/iblock/element/19298/csv/file/ru/",
+    "format": "csv",
+    "territorial_level": [
+      "region"
+    ],
+    "periodicity": "year",
+    "first_period": "2000",
+    "last_period": "2024",
+    "last_checked": "2026-09-30",
+    "status": "active"
+  },
+  {
+    "indicator": "grp",
+    "name_ru": "Валовой региональный продукт",
+    "category": "economy",
+    "source_page": "https://stat.gov.kz/ru/industries/economy/national-accounts/dynamic-tables/",
+    "download_url": "https://stat.gov.kz/api/iblock/element/5923/csv/file/ru/",
+    "format": "csv",
+    "territorial_level": [
+      "region"
+    ],
+    "periodicity": "quarter",
+    "first_period": "2010-Q1",
+    "last_period": "2025-Q1",
+    "last_checked": "2026-09-30",
+    "status": "active"
+  },
+  {
+    "indicator": "grp_per_capita",
+    "name_ru": "ВРП на душу населения",
+    "category": "economy",
+    "source_page": "https://stat.gov.kz/ru/industries/economy/national-accounts/dynamic-tables/",
+    "download_url": "https://stat.gov.kz/api/iblock/element/5930/csv/file/ru/",
+    "format": "csv",
+    "territorial_level": [
+      "region"
+    ],
+    "periodicity": "year",
+    "first_period": "2000",
+    "last_period": "2024",
+    "last_checked": "2026-09-30",
+    "status": "active"
+  },
+  {
+    "indicator": "grp_volume_index",
+    "name_ru": "Индекс физического объёма ВРП",
+    "category": "economy",
+    "source_page": "https://stat.gov.kz/ru/industries/economy/national-accounts/dynamic-tables/",
+    "download_url": "https://stat.gov.kz/api/iblock/element/5926/csv/file/ru/",
+    "format": "csv",
+    "territorial_level": [
+      "region"
+    ],
+    "periodicity": "year",
+    "first_period": "2001",
+    "last_period": "2024",
+    "last_checked": "2026-09-30",
+    "status": "active"
+  },
+  {
+    "indicator": "industrial_output",
+    "name_ru": "Объём промышленного производства",
+    "category": "industry",
+    "source_page": "https://stat.gov.kz/ru/industries/business-statistics/stat-industrial-production/dynamic-tables/",
+    "download_url": "https://stat.gov.kz/api/iblock/element/5791/csv/file/ru/",
+    "format": "csv",
+    "territorial_level": [
+      "region"
+    ],
+    "periodicity": "year",
+    "first_period": "2009",
+    "last_period": "2023",
+    "last_checked": "2026-09-30",
+    "status": "active"
+  },
+  {
+    "indicator": "industrial_production_index",
+    "name_ru": "Индекс промышленного производства",
+    "category": "industry",
+    "source_page": "https://stat.gov.kz/ru/industries/business-statistics/stat-industrial-production/dynamic-tables/",
+    "download_url": "https://stat.gov.kz/api/iblock/element/5809/csv/file/ru/",
+    "format": "csv",
+    "territorial_level": [
+      "region"
+    ],
+    "periodicity": "year",
+    "first_period": "2009",
+    "last_period": "2023",
+    "last_checked": "2026-09-30",
+    "status": "active"
+  },
+  {
+    "indicator": "fixed_capital_investment",
+    "name_ru": "Инвестиции в основной капитал",
+    "category": "investment",
+    "source_page": "https://stat.gov.kz/ru/industries/business-statistics/stat-invest/dynamic-tables/",
+    "download_url": "https://stat.gov.kz/api/iblock/element/5546/csv/file/ru/",
+    "format": "csv",
+    "territorial_level": [
+      "region"
+    ],
+    "periodicity": "year",
+    "first_period": "2016",
+    "last_period": "2018",
+    "last_checked": "2026-09-30",
+    "status": "active"
+  },
+  {
+    "indicator": "construction_output",
+    "name_ru": "Объём строительных работ",
+    "category": "construction",
+    "source_page": "https://stat.gov.kz/ru/industries/business-statistics/stat-inno-build/dynamic-tables/",
+    "download_url": "https://stat.gov.kz/api/iblock/element/4296/csv/file/ru/",
+    "format": "csv",
+    "territorial_level": [
+      "region"
+    ],
+    "periodicity": "year",
+    "first_period": "2016",
+    "last_period": "2022",
+    "last_checked": "2026-09-30",
+    "status": "active"
+  },
+  {
+    "indicator": "housing_commissioned",
+    "name_ru": "Ввод жилья",
+    "category": "construction",
+    "source_page": "https://stat.gov.kz/ru/industries/business-statistics/stat-inno-build/dynamic-tables/",
+    "download_url": "https://stat.gov.kz/api/iblock/element/4289/csv/file/ru/",
+    "format": "csv",
+    "territorial_level": [
+      "region"
+    ],
+    "periodicity": "year",
+    "first_period": "2014",
+    "last_period": "2022",
+    "last_checked": "2026-09-30",
+    "status": "active"
+  }
+]
