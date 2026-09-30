@@ -1,0 +1,1 @@
+[{"slug":"population","name_ru":"Численность населения","name_kk":"Халық саны","category":"demography","description":"Численность населения на начало периода","unit":"человек","periodicity":"annual","source_url":"https://stat.gov.kz/ru/industries/socialtatistics/demography/dynamic-tables/","normalization_allowed":["absolute","change_pct","per_km2"]}]

@@ -1,4 +1,4 @@
-.PHONY: setup db kato geography etl etl-demography etl-labor etl-economy validate dev test
+.PHONY: setup db kato geography etl etl-demography etl-labor etl-economy validate dev static test
 setup:
 	cp .env.example .env
 db:
@@ -19,6 +19,7 @@ validate:
 	docker compose run --rm etl-worker python -m etl validate
 dev:
 	docker compose up --build
+static:
+	cd apps/frontend && npm ci && npm run build:static
 test:
 	docker compose run --rm backend pytest && docker compose run --rm frontend npm test
-

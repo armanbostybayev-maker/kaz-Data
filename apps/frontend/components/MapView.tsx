@@ -1,7 +1,7 @@
 "use client";
 import {useEffect,useRef} from "react";
 import maplibregl,{Map} from "maplibre-gl";
-import {API} from "@/lib/api";
+import {mapData} from "@/lib/api";
 import {useAtlas} from "@/lib/store";
 
 export default function MapView(){
@@ -15,7 +15,7 @@ export default function MapView(){
   return()=>{map.current?.remove();map.current=null};
  },[]);
  useEffect(()=>{const m=map.current;if(!m)return; const id="territories";
-  const load=async()=>{const data=await fetch(`${API}/api/map/${indicator}?year=${year}&territory_level=${level}`).then(r=>r.json());
+  const load=async()=>{const data=await mapData(indicator,year,level);
    if(m.getLayer("fill"))m.removeLayer("fill"); if(m.getLayer("line"))m.removeLayer("line"); if(m.getSource(id))m.removeSource(id);
    m.addSource(id,{type:"geojson",data});
    m.addLayer({id:"fill",type:"fill",source:id,paint:{"fill-color":["case",["!",["has","value"]],"#d9dedb",["interpolate",["linear"],["to-number",["get","value"]],0,"#d7eee7",500000,"#8ac9b8",1000000,"#2c927f",2000000,"#075b52"]],"fill-opacity":["case",["==",["get","kato"],selected||""],.88,.7]}} as any);
